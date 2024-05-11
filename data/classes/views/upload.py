@@ -24,7 +24,7 @@ class View(ParentView):
             return
         elif self.check_file_exists(filepath):
             # VALIDATE THE FILE
-            self.file_data = pd.read_csv(filepath,header=0,sep="\t")
+            self.file_data = pd.read_csv(filepath,header=0,sep=",")
             self.state_manager.set_state("file_data", self.file_data)
             self.state_manager.get_state("load_view")(name="home")
         else:

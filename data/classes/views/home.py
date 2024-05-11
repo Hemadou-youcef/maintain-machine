@@ -13,9 +13,7 @@ class View(ParentView):
         label.pack()
         
         # create four buttons each button navigate to a different view
-        spindle_button = customtkinter.CTkButton(self.master,
-                                                  text="Spindles"
-                                                 , command=lambda: self.state_manager.get_state("load_view")(name="spindles"))
+        spindle_button = customtkinter.CTkButton(self.master,text="Spindles", command=lambda: self.state_manager.get_state("load_view")(name="spindles"))
         spindle_button.pack()
         nozzles_button = customtkinter.CTkButton(self.master, text="Nozzles", command=lambda: self.state_manager.get_state("load_view")(name="nozzles"))
         nozzles_button.pack()
@@ -34,12 +32,13 @@ class View(ParentView):
             spindles_data = []
             while True:
                 try:
+                    spindle_rate = float(str(file_data.values[len(spindles_data)][9]).replace(",", "."))
                     spindles_data.append({
                         "number": len(spindles_data) + 1,
-                        "failures_rate": float(file_data.values[len(spindles_data)][9].replace(",", ".")),
-                        "is_failure": int(float(file_data.values[len(spindles_data)][9].replace(",", "."))) > 1,
+                        "failures_rate": spindle_rate,
+                        "is_failure": spindle_rate > 1,
                         "questions": [],
-                        "state": "in process" 
+                        "state": "in process 🛠️" if spindle_rate > 1 else "Normal ✔️"
                     })
 
                 except IndexError:

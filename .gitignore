@@ -1,3 +1,4 @@
-/_pycache_
-/old
+_pycache_/
+old/
+*.py[cod]
 database spindles.csv

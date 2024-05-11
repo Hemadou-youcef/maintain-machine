@@ -5,7 +5,7 @@ import data.classes.root.state as state
 import data.classes.views.views as views
 import data.classes.views.home as home
 import data.classes.views.upload as upload
-import data.classes.views.questions as questions
+import data.classes.views.inspector as inspector
 import data.classes.views.spindles as spindles
 
 
@@ -51,12 +51,12 @@ class ViewSlider(customtkinter.CTk):
     def add_view(self, view, name):
         self.views[name] = view
         
-    def load_view(self, name):
+    def load_view(self, name, clear=True):
         view = self.views.get(name)
         if view:
             # clear the container and state manager current view children
-            self.clear_view()
-            
+            if clear:
+                self.clear_view()
             
             # change the title of the view
             view.load_title(self)
@@ -67,6 +67,8 @@ class ViewSlider(customtkinter.CTk):
             print(f"View {name} not found")
         
     def clear_view(self):
+        for child in self.container.children:
+            child.destroy()
         for child in self.state_manager.get_state("current_view_widget"):
             child.destroy()
             
@@ -86,6 +88,7 @@ class ViewSlider(customtkinter.CTk):
         self.views = {
             "upload": upload.View(master=self.container,state_manager=self.state_manager),
             "home": home.View(master=self.container,state_manager=self.state_manager),
+            "inspector": inspector.View(master=self.container,state_manager=self.state_manager),
             "spindles": spindles.View(master=self.container,state_manager=self.state_manager)
         }
         
