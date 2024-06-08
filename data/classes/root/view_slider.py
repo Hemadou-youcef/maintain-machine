@@ -7,8 +7,10 @@ import data.classes.views.home as home
 import data.classes.views.upload as upload
 import data.classes.views.inspector as inspector
 import data.classes.views.part_information as part_information
+import data.classes.views.feeders as feeders
 import data.classes.views.spindles as spindles
 import data.classes.views.nozzles as nozzles
+import data.classes.views.solution_detail as solution_detail
 
 
 class ViewSlider(customtkinter.CTk):
@@ -85,8 +87,10 @@ class ViewSlider(customtkinter.CTk):
             "home": home.View(master=self.container,state_manager=self.state_manager),
             "inspector": inspector.View(master=self.container,state_manager=self.state_manager),
             "part_information": part_information.View(master=self.container,state_manager=self.state_manager),
+            "feeders": feeders.View(master=self.container,state_manager=self.state_manager),
             "spindles": spindles.View(master=self.container,state_manager=self.state_manager),
             "nozzles": nozzles.View(master=self.container,state_manager=self.state_manager),
+            "solution_detail": solution_detail.View(master=self.container,state_manager=self.state_manager)
         }
         
         

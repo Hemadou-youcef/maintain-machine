@@ -21,37 +21,50 @@ class View(ParentView):
         return [back_button]
     
     def content(self):
-        current_part = self.state_manager.get_state("part_inspected_information")['part']
-        current_question_index = self.state_manager.get_state("part_inspected_information")['current_question_index']
+        part_information = self.state_manager.get_state("part_inspected_information")
 
 
         # Add any widgets or components here
-        label = customtkinter.CTkLabel(self.master, text="Inspector - "+current_part )
+        label = customtkinter.CTkLabel(self.master, text="Inspector - " + part_information['part'])
         label.grid(row=1, column=0, padx=10, pady=10, sticky=customtkinter.W)
 
-        submit_button = customtkinter.CTkButton(master=self.master, text="Submit", command=lambda: self.submit())
+        submit_button = customtkinter.CTkButton(master=self.master, text="Fixed", command=lambda: self.submit())
 
-        # scrollable_frame = self.create_frame()
+        # create a frame to hold the solutions
+        solutions_frame = self.create_frame()
 
-        # Insert Questions
-        self.diagnosis_tree = DiagnosisTree(current_part)
+        self.diagnosis_tree = DiagnosisTree(part_information['part'])
+        if part_information['part'] == "feeder":
+            # check the biggest failed section in the feeder
+            feeder = self.state_manager.get_state("parts")[0]['data']
+            section_position = [5,6,7,8,9,10,11,12]
+            # find the biggest failed section by checking each section in the feeder feeder.iloc[part_information['information']['number'] - 1, section_position]
+            biggest_failed_section = section_position[0]
+            for section in section_position:
+                if feeder.iloc[part_information['information']['number'] - 1, section] > feeder.iloc[part_information['information']['number'] - 1, biggest_failed_section]:
+                    biggest_failed_section = section
 
-        label = customtkinter.CTkLabel(master=self.master, text=self.diagnosis_tree.getQuestion(current_question_index))
-        label.grid(row=2, column=0, padx=10, pady=10, columnspan=4)
+            # get the solution for the biggest failed section
+            solution = self.diagnosis_tree.get_solution(feeder.columns[biggest_failed_section])
+
             
-            # Check the type of the question and decide which widget to use
-        if self.diagnosis_tree.getQuestionType(current_question_index) == 'YesNo':
-            self.questionElement = self.create_yes_no_widget(3,self.master)
-        elif self.diagnosis_tree.getQuestionType(current_question_index) == 'Input':
-            self.questionElement = self.create_input_widget(3,self.master)
-            
-        submit_button.grid(row=4, column=0, padx=10, pady=10, columnspan=4)
-        # create back button to go to the previous question if the current question is not the first question
-        if current_question_index > 0:
-            back_button = customtkinter.CTkButton(master=self.master, text="Back", command=lambda: self.back_to_previous_question())
-            back_button.grid(row=5, column=0, padx=10, pady=10, columnspan=4)
+            solution_buttons = []
+            # create loop of button of each solution
+            for i, sol in enumerate(solution):
+                solution_button = customtkinter.CTkButton(master=solutions_frame, text=sol["name"], command=lambda sol=sol: self.show_solution(sol))
+                solution_button.grid(row=0, column=i, padx=10, pady=10, sticky='w')
+                solution_buttons.append(solution_button)
+
         
-        return [label, submit_button, self.questionElement]
+        return [label, submit_button, solutions_frame, *solution_buttons]
+    
+
+    def show_solution(self, solution):
+        # save the solution in the state manager
+        self.state_manager.set_state("current_solution", solution)
+        # load the solution detail view
+        self.state_manager.get_state("load_view")(name="solution_detail")
+    
     
     def submit(self):
         # get the result of the question
@@ -102,19 +115,10 @@ class View(ParentView):
         })
         # load the previous question
         self.state_manager.get_state("load_view")(name="inspector")
-        
 
-    def create_input_widget(self,row,frame):
-        entry = customtkinter.CTkEntry(frame)
-        entry.grid(row=row, column=1, padx=10, pady=10, sticky='w')
-        return entry
+    def create_frame(self):
+        # Create Scrollable Frame
+        CTkScrollableFrame = customtkinter.CTkScrollableFrame(self.master)
+        CTkScrollableFrame.grid(row=2, column=0, padx=10, pady=10, sticky=customtkinter.NSEW,columnspan=10)
+        return CTkScrollableFrame
         
-    def create_yes_no_widget(self,row,frame):
-        var = tk.StringVar()
-        var.set('Yes')
-        yes = customtkinter.CTkRadioButton(frame, text='Yes', variable=var, value='Yes')
-        yes.grid(row=row, column=1, padx=10, pady=10, sticky='w')
-        no = customtkinter.CTkRadioButton(frame, text='No', variable=var, value='No')
-        no.grid(row=row, column=2, padx=10, pady=10, sticky='w')
-        
-        return var

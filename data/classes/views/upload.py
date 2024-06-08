@@ -24,8 +24,8 @@ class View(ParentView):
         if filepath == "":
             return
         elif self.check_file_exists(filepath):
-            # VALIDATE THE FILE
-            self.file_data = pd.read_csv(filepath,header=0,sep="\t")
+            # VALIDATE THE FILE AND READ THE XLSX FILE
+            self.file_data = pd.ExcelFile(filepath)
             self.state_manager.set_state("file_data", self.file_data)
             self.state_manager.set_state("do_analysis", True)
             self.state_manager.get_state("load_view")(name="home")

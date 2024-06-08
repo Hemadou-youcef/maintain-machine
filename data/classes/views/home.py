@@ -29,9 +29,9 @@ class View(ParentView):
         nozzles_button = customtkinter.CTkButton(self.master, text="Nozzles", command=lambda: self.state_manager.get_state("load_view")(name="nozzles"))
         nozzles_button.grid(row=3, column=0, padx=10, pady=10)
         spindle_button = customtkinter.CTkButton(self.master,text="Spindles", command=lambda: self.state_manager.get_state("load_view")(name="spindles"))
-        spindle_button.grid(row=2, column=0, padx=10, pady=10)
+        spindle_button.grid(row=4, column=0, padx=10, pady=10)
         
-        return [label, spindle_button, nozzles_button, feeders_button]
+        return [label, feeders_button,spindle_button, nozzles_button]
         
         
     def analyse_data(self):
@@ -44,49 +44,82 @@ class View(ParentView):
         if file_data is not None:
             # perform some analysis on the data
             # start with spindles
-            spindles_data = []
-            while True:
-                try:
-                    spindle_rate = float(str(file_data.values[len(spindles_data)][9]).replace(",", "."))
-                    spindles_data.append({
-                        "number": len(spindles_data) + 1,
-                        "failures_rate": spindle_rate,
-                        "is_failure": spindle_rate > 1,
-                        "state": False,
-                        "state_label": "in process 🛠️" if spindle_rate > 1 else "Normal ✔️",
-                        "is_inspected": False,
-                        "questions": [],
-                    })
-
-                except IndexError:
-                    break
-            # set the data in the state manager
-            self.state_manager.set_state("spindles_data", spindles_data)
+            parts = [
+                {
+                    "part": "feeders",
+                    "position": 5,
+                    "data": None,
+                    "inspected_data":[]
+                },
+                {
+                    "part": "spindles",
+                    "position": 7,
+                    "data": None,
+                    "inspected_data":[]
+                },
+                {
+                    "part": "nozzles",
+                    "position": 8,
+                    "data": None,
+                    "inspected_data":[]
+                }
+            ]
+            positions = [5,7,8]
+            tables = self.process_sheets(file_data, positions)
             
-            # then nozzles
-            nozzles_data = []
-            while True:
-                try:
-                    nozzle_rate = float(str(file_data.values[len(nozzles_data)][10]).replace(",", "."))
-                    nozzles_data.append({
-                        "number": len(nozzles_data) + 1,
-                        "failures_rate": nozzle_rate,
-                        "is_failure": nozzle_rate > 1,
-                        "questions": [],
-                        "state": "in process 🛠️" if nozzle_rate > 1 else "Normal ✔️"
-                    })
 
-                except IndexError:
-                    break
-            # set the data in the state manager
-            self.state_manager.set_state("nozzles_data", nozzles_data)
+            for sheet_num, table in tables.items():
+                if sheet_num == 5:
+                    parts[0]["data"] = table
+                    parts[0]["inspected_data"] = self.check_parts(table)
+                elif sheet_num == 7:
+                    parts[1]["data"] = table
+                    parts[1]["inspected_data"] = self.check_parts(table)
+                elif sheet_num == 8:
+                    parts[2]["data"] = table
+                    parts[2]["inspected_data"] = self.check_parts(table)
+
+            
+            self.state_manager.set_state("parts", parts)
+
         else:
             print("No data available")
         
         # set the analysis flag to False
         self.state_manager.set_state("do_analysis", False)    
     
+    def check_parts(self,table):
+        # check if column Total Failures is bigger than 2% of sum of Total Failures
+        total_failure = table["Total Failures"].sum()
+        inspected_data = []
 
+        # loop through the table and check if the Total Failures is greater than 2% of the sum of Total Failures
+        for index, row in table.iterrows():
+            if row["Total Failures"] > 0.02 * total_failure:
+                inspected_data.append({
+                        "number": index,
+                        "failures_rate": row["Total Failures"] / total_failure,
+                        "is_failure": True,
+                        "state": False,
+                        "state_label": "in process 🛠️" if row["Total Failures"] / total_failure > 1 else "Normal ✔️",
+                        "solution": [],
+                        "is_inspected": False,
+
+                    })
+            else:
+                inspected_data.append({
+                        "number": index,
+                        "failures_rate": row["Total Failures"] / total_failure,
+                        "is_failure": False,
+                        "state": False,
+                        "state_label": "Normal ✔️",
+                        "solution": [],
+                        "is_inspected": False,
+                    })
+                
+        return inspected_data
+    
+        
 
     def detect_table_start(self,df):
         """
@@ -103,42 +136,36 @@ class View(ParentView):
         """
         Extract the table from the dataframe starting at (start_row, start_col).
         """
-        end_row = start_row
-        end_col = start_col
-        
-        # Find the end row
-        while end_row < df.shape[0] and pd.notna(df.iat[end_row, start_col]):
-            end_row += 1
-        
-        # Find the end column
-        while end_col < df.shape[1] and pd.notna(df.iat[start_row, end_col]):
-            end_col += 1
+        end_row = df.shape[0]
+        end_col = df.shape[1]
         
         table = df.iloc[start_row:end_row, start_col:end_col]
-        table.columns = table.iloc[0]  # Set the first row as header
-        table = table.drop(start_row)  # Drop the header row
+        table = table.dropna(thresh=4)
+        table = table.reset_index(drop=True)
+        # set the first row as the header
+        table.columns = table.iloc[0]
+        table = table.drop(0)
         
         return table
 
     
-    def read_sheets(self,file_path, sheet_numbers):
+    def process_sheets(self,xls, sheet_numbers):
         """
-        Read specified sheets from an Excel file and convert each to a DataFrame.
+        Process the specified sheets from the Excel file and convert each to a DataFrame.
         """
-        xls = pd.ExcelFile(file_path)
         tables = {}
         
         for sheet_num in sheet_numbers:
-            sheet_name = xls.sheet_names[sheet_num - 1]
-            df = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
+            df = xls.parse(sheet_num - 1, header=None)
             
             start_row, start_col = self.detect_table_start(df)
             if start_row is not None and start_col is not None:
                 table = self.extract_table(df, start_row, start_col)
-                tables[sheet_name] = table
+                tables[sheet_num] = table
             else:
-                print(f"Table not found in sheet {sheet_name}")
+                print(f"Table not found in sheet {sheet_num}")
         
         return tables
+
     
     
