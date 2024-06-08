@@ -14,10 +14,20 @@ class ParentView(customtkinter.CTkFrame):
             self.header(kwargs["header"])
         
     def load_content(self):
-        self.state_manager.set_state("current_view_widget", self.content())
+        self.state_manager.set_state("current_view_widget", [*self.header_content(),*self.content()])
+        
         
     def content(self):
         pass
+    
+    def header_content(self):
+        return []
+        
+    def get_title(self):
+        return self.title
+    
+    def isHeaderNeeded(self):
+        return self.header
     
     def load_title(self,master):
         master.title(self.title)

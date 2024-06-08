@@ -6,7 +6,9 @@ import data.classes.views.views as views
 import data.classes.views.home as home
 import data.classes.views.upload as upload
 import data.classes.views.inspector as inspector
+import data.classes.views.part_information as part_information
 import data.classes.views.spindles as spindles
+import data.classes.views.nozzles as nozzles
 
 
 class ViewSlider(customtkinter.CTk):
@@ -27,37 +29,27 @@ class ViewSlider(customtkinter.CTk):
             
         # set state for load view and refresh view
         self.state_manager.set_state("load_view", self.load_view)
-        
-            
-        # create a frame to hold the views
-        self.container = customtkinter.CTkFrame(self)
-        self.container.pack(fill="both", expand=True)
+        self.create_frame()
         
         # load views dictionary
         self.load_view_dict()
+    
+    def create_frame(self):
+        # create a frame to hold the views
+        self.container = customtkinter.CTkFrame(self)
+        # load frame pack
+        self.container.pack(fill="both", expand=True)
         
-        
-    def header(self, title):
-        # create a frame to hold the header 
-        # header contain the title of the view and navigation buttons
-        # self.header = tk.Frame(self.container)
-        # self.header.pack(fill="x")
-        
-        # # create a label to hold the title
-        # self.title = tk.Label(self.header, text=title)
-        # self.title.pack(side="left")
-        pass
         
     def add_view(self, view, name):
         self.views[name] = view
         
     def load_view(self, name, clear=True):
+        # clear the container and state manager current view children
+        if clear:
+            self.clear_view()
         view = self.views.get(name)
         if view:
-            # clear the container and state manager current view children
-            if clear:
-                self.clear_view()
-            
             # change the title of the view
             view.load_title(self)
             
@@ -66,17 +58,20 @@ class ViewSlider(customtkinter.CTk):
         else:
             print(f"View {name} not found")
         
-    def clear_view(self):
-        for child in self.container.children:
-            child.destroy()
-        for child in self.state_manager.get_state("current_view_widget"):
-            child.destroy()
-            
+    def clear_view(self):    
+        # destroy the container
+        self.container.destroy()
+        
+        # re-create the container
+        self.create_frame()
+        
+        # load the views dictionary
+        self.load_view_dict()
+        
         self.state_manager.set_state("current_view_widget", [])
             
         # re-render the window
         customtkinter.CTk.update(self)
-        
         
     def change_view(self, name):
         self.show_view(name)
@@ -89,7 +84,9 @@ class ViewSlider(customtkinter.CTk):
             "upload": upload.View(master=self.container,state_manager=self.state_manager),
             "home": home.View(master=self.container,state_manager=self.state_manager),
             "inspector": inspector.View(master=self.container,state_manager=self.state_manager),
-            "spindles": spindles.View(master=self.container,state_manager=self.state_manager)
+            "part_information": part_information.View(master=self.container,state_manager=self.state_manager),
+            "spindles": spindles.View(master=self.container,state_manager=self.state_manager),
+            "nozzles": nozzles.View(master=self.container,state_manager=self.state_manager),
         }
         
         

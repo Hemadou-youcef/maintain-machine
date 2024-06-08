@@ -17,6 +17,7 @@ class View(ParentView):
         upload_button_ = customtkinter.CTkButton(self.master, text="Upload", command=self.upload_file)
         upload_button_.pack(fill="none", expand=True)
         return [upload_button_]
+    
         
     def upload_file(self):
         filepath = filedialog.askopenfilename()
@@ -24,8 +25,9 @@ class View(ParentView):
             return
         elif self.check_file_exists(filepath):
             # VALIDATE THE FILE
-            self.file_data = pd.read_csv(filepath,header=0,sep=",")
+            self.file_data = pd.read_csv(filepath,header=0,sep="\t")
             self.state_manager.set_state("file_data", self.file_data)
+            self.state_manager.set_state("do_analysis", True)
             self.state_manager.get_state("load_view")(name="home")
         else:
             showinfo('Error', 'File not found')

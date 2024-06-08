@@ -20,7 +20,7 @@ class DiagnosisTree:
             # current_dir = os.path.dirname(os.path.abspath(__file__))
             current_dir = 'D:/youcef-hemadou/PROGRAMMING/PYTHON/PROJECTS/00001-MAINTAIN-MACHINE/data/assets/csv_data/questions'
             # check part name
-            if self.part_name == 'spindle':
+            if self.part_name == 'spindles':
                 # if self.check_file_exists(f"{current_dir}/spindle_questions.csv"):
                 #     file_data = pd.read_csv(f"{current_dir}/spindle_questions.csv",header=None,sep=",")
                 #     self.questions = []
@@ -59,7 +59,7 @@ class DiagnosisTree:
                     [1,"question1-1", "YesNo",None],
                     [1,"question1-1-1", "YesNo", "change the spindle because it's broken"],
                     [2,"question2", "YesNo",None],
-                    [2,"question2-1", "YesNo",None],
+                    [2,"question2-1", "YesNo","Change the spindle because it's broken"],
                     [3,"question3", "YesNo", "change the spindle because it's broken"],
                     [4,"question4", "YesNo", "change the spindle because it's broken"],
                     [5,"question5", "YesNo", "change the spindle because it's broken"],
@@ -73,18 +73,21 @@ class DiagnosisTree:
             print("Error")
 
     def getNextMainQuestion(self, node):
+        next_question_number = self.questions[node][0] + 1
         # loop through the questions and find the index of questions that have node + 1 as the first element if not found return None
         for i in range(0, len(self.questions)):
-            if self.questions[i][0] == node + 1:
+            # find the first item in questions that have next_question_number as the first element
+            if next_question_number == self.questions[i][0]:
                 return i
         return None
 
         
     def getResult(self,node, answer):
         # result of this function is a list of 3 elements
-        # the first element is the question answer
-        # the second element is the next question index
-        # the third element is a boolean to tell that the question loop is stopped or not
+        # the first element is the question result
+        # the second element is the question answer
+        # the third element is the next question index
+        # the fourth element is a boolean to tell that the question loop is stopped or not
         try:
             # get the next main question 
             next_main_question = self.getNextMainQuestion(node)
@@ -92,11 +95,13 @@ class DiagnosisTree:
             if self.questions[node][2] == 'YesNo':
                 # is there an answer
                 if answer == "Yes":
-                    return [self.questions[node][3],next_main_question,False]
+                    if next_main_question is not None:
+                        return [True,self.questions[node][3],next_main_question,False]
+                    return [True,None,None,True]
                 elif answer == "No":
                     if self.questions[node][0] == self.questions[node + 1][0]:
-                        return [None,node+1,False]
-                    return [self.questions[node][3],None,True]
+                        return [False,None,node+1,False]
+                    return [False,self.questions[node][3],None,True]
         except:
             return None
 
