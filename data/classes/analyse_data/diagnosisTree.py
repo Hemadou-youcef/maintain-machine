@@ -1,3 +1,4 @@
+import data.classes.analyse_data.solutions.first_solution as first_solution
 class DiagnosisTree:
     def __init__(self, part_name):
         self.part_name = part_name
@@ -5,28 +6,36 @@ class DiagnosisTree:
         self.solutions = {
             "feeder": {
                 "Components Purged": [
-                    {"name": "Feeder Solution 1", "description": "Description of feeder solution 1", "image": "/assets/images/image1.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of feeder solution 2", "image": "/assets/images/image2.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 "Part Sense Failures": [
-                    {"name": "Feeder Solution 1", "description": "Description of feeder solution 1", "image": "/assets/images/image3.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of feeder solution 2", "image": "/assets/images/image4.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 "Mispicks": [
-                    {"name": "Feeder Solution 1", "description": "Description of Feeder solution 1", "image": "/assets/images/image5.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of Feeder solution 2", "image": "/assets/images/image6.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 "Pick Attempts From Empty Feeders": [
-                    {"name": "Feeder Solution 1", "description": "Description of Feeder solution 1", "image": "/assets/images/image7.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of Feeder solution 2", "image": "/assets/images/image8.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 "Rejected": [
-                    {"name": "Feeder Solution 1", "description": "Description of Feeder solution 1", "image": "/assets/images/image9.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of Feeder solution 2", "image": "/assets/images/image10.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 "Location Failures": [
-                    {"name": "Feeder Solution 1", "description": "Description of Feeder solution 1", "image": "/assets/images/image11.png"},
-                    {"name": "Feeder Solution 2", "description": "Description of Feeder solution 2", "image": "/assets/images/image12.png"},
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
+                ],
+                "Components Upside Down": [
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
+                ],
+                "VPS Part Presence Failures": [
+                    first_solution.SolutionContent(),
+                    first_solution.SolutionContent()
                 ],
                 # Add other feeder failure types and their solutions here...
             },

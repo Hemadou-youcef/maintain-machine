@@ -62,19 +62,4 @@ class View(ParentView):
 
         return [solution_name, solution_description, solution_image_label, submit_button]
 
-    def submit(self):
-        # Get the part information
-        part_information = self.state_manager.get_state("part_inspected_information")
-        # Get the solution
-        solution = self.state_manager.get_state("current_solution")
-        # Apply the solution and check if the solution is not already applied
-        if solution not in part_information["solution"]:
-            part_information["solution"].append(solution)
-            self.state_manager.set_state("part_inspected_information", {
-                "part": part_information["part"],
-                "information": part_information["information"],
-                "solution": part_information["solution"] + [solution]
-            })
-
-        # Navigate to the inspector view
-        self.state_manager.get_state("load_view")(name="inspector")
+    

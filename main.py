@@ -1,4 +1,7 @@
+import data.classes.analyse_data.solutions.first_solution as first_solution
+import tkinter as tk
 import customtkinter
+from PIL import Image, ImageTk
 from data.classes.root.view_slider import ViewSlider
 
 if __name__ == "__main__":
@@ -8,5 +11,3 @@ if __name__ == "__main__":
     view.load_view("upload",clear=False)
     
     view.mainloop()
-    
-    

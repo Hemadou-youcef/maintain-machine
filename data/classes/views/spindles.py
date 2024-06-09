@@ -21,17 +21,18 @@ class View(ParentView):
     
     def content(self):
         # Add any widgets or components here
-        label = customtkinter.CTkLabel(self.master, text=f"Spindles List 🛠️")
+        label = customtkinter.CTkLabel(self.master, text=f"spindles List 🛠️")
         label.grid(row=1, column=0, padx=10, pady=10, sticky=customtkinter.W)
         
         # show list of spindles
         scrollable_frame = self.create_frame()
 
-        # Insert Spindles from self.state_manager.get_state("spindles_data")
-        spindles = self.state_manager.get_state("spindles_data")
+        spindles = self.state_manager.get_state("parts")[1]
+        inspected_spindles = spindles['inspected_data']
+        
         spindlesElement = []
-        for i, spindle in enumerate(spindles):
-            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Spindle {spindle['number']}")
+        for i, spindle in enumerate(inspected_spindles):
+            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Spindle-{spindle['name']}")
             label.grid(row=i, column=0, padx=10, pady=10, sticky='w')
             
             # Check the type of the question and decide which widget to use
@@ -41,7 +42,7 @@ class View(ParentView):
                 spindle_button.grid(row=i, column=1, padx=10, pady=10, sticky='w')
                 spindlesElement.append(spindle_button)
             else:
-                # create a label to show the state of the spindle
+                # create a label to show the state of the spindles
                 state_label = customtkinter.CTkLabel(master=scrollable_frame, text=spindle['state_label'])
                 state_label.grid(row=i, column=1, padx=10, pady=10, sticky='w')
                 spindlesElement.append(state_label)
@@ -57,12 +58,10 @@ class View(ParentView):
         CTkScrollableFrame.columnconfigure(1, weight=1)
         return CTkScrollableFrame
     
-    def inspect_spindle(self,spindle):
+    def inspect_spindle(self,spindles):
         self.state_manager.set_state("part_inspected_information",{
-            "part": "spindles",
-            "information": spindle,
-            "questions": [],
-            "current_question_index": 0,
-            "result": False,
+            "part": "spindle",
+            "information": spindles,
+            "solution": []
         })
         self.state_manager.get_state("load_view")(name="inspector")

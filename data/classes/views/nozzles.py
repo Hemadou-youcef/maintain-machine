@@ -27,27 +27,28 @@ class View(ParentView):
         # show list of Nozzles
         scrollable_frame = self.create_frame()
 
-        # Insert Nozzles from self.state_manager.get_state("nozzles_data")
-        nozzles = self.state_manager.get_state("nozzles_data")
-        nozzlesElement = []
-        for i, nozzle in enumerate(nozzles):
-            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Nozzles {nozzles['number']}")
+        Nozzles = self.state_manager.get_state("parts")[2]
+        inspected_Nozzles = Nozzles['inspected_data']
+        
+        NozzlesElement = []
+        for i, nozzle in enumerate(inspected_Nozzles):
+            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Nozzle-{nozzle['name']}")
             label.grid(row=i, column=0, padx=10, pady=10, sticky='w')
             
             # Check the type of the question and decide which widget to use
             if nozzle['is_failure'] and not nozzle['is_inspected']:
                 # create a button to navigate to the inspector view
-                nozzle_button = customtkinter.CTkButton(master=scrollable_frame, text="Inspect 🛠️", command= lambda: self.inspect_nozzle(nozzles))
+                nozzle_button = customtkinter.CTkButton(master=scrollable_frame, text="Inspect 🛠️", command= lambda: self.inspect_nozzle(nozzle))
                 nozzle_button.grid(row=i, column=1, padx=10, pady=10, sticky='w')
-                nozzlesElement.append(nozzle_button)
+                NozzlesElement.append(nozzle_button)
             else:
-                # create a label to show the state of the nozzles
-                state_label = customtkinter.CTkLabel(master=scrollable_frame, text=nozzles['state_label'])
+                # create a label to show the state of the Nozzles
+                state_label = customtkinter.CTkLabel(master=scrollable_frame, text=nozzle['state_label'])
                 state_label.grid(row=i, column=1, padx=10, pady=10, sticky='w')
-                nozzlesElement.append(state_label)
+                NozzlesElement.append(state_label)
                 
 
-        return [label, scrollable_frame, *nozzlesElement]
+        return [label, scrollable_frame, *NozzlesElement]
 
     def create_frame(self):
         # Create Scrollable Frame
@@ -57,11 +58,10 @@ class View(ParentView):
         CTkScrollableFrame.columnconfigure(1, weight=1)
         return CTkScrollableFrame
     
-    def inspect_nozzle(self,nozzles):
+    def inspect_nozzle(self,Nozzles):
         self.state_manager.set_state("part_inspected_information",{
-            "part": "nozzles",
-            "information": nozzles,
-            "questions": [],
-            "current_question_index": 0,
+            "part": "nozzle",
+            "information": Nozzles,
+            "solution": []
         })
         self.state_manager.get_state("load_view")(name="inspector")

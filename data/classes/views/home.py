@@ -71,13 +71,13 @@ class View(ParentView):
             for sheet_num, table in tables.items():
                 if sheet_num == 5:
                     parts[0]["data"] = table
-                    parts[0]["inspected_data"] = self.check_parts(table)
+                    parts[0]["inspected_data"] = self.check_parts(table, "feeders")
                 elif sheet_num == 7:
                     parts[1]["data"] = table
-                    parts[1]["inspected_data"] = self.check_parts(table)
+                    parts[1]["inspected_data"] = self.check_parts(table, "spindles")
                 elif sheet_num == 8:
                     parts[2]["data"] = table
-                    parts[2]["inspected_data"] = self.check_parts(table)
+                    parts[2]["inspected_data"] = self.check_parts(table, "nozzles")
 
             
             self.state_manager.set_state("parts", parts)
@@ -88,15 +88,23 @@ class View(ParentView):
         # set the analysis flag to False
         self.state_manager.set_state("do_analysis", False)    
     
-    def check_parts(self,table):
+    def check_parts(self,table, part_name):
         # check if column Total Failures is bigger than 2% of sum of Total Failures
         total_failure = table["Total Failures"].sum()
         inspected_data = []
 
+        name = ""
         # loop through the table and check if the Total Failures is greater than 2% of the sum of Total Failures
         for index, row in table.iterrows():
+            if part_name == "feeders":
+                name = f"{row['Feeder']}-{row['Serial Number']}-{row['Component']}-{row['Track/Pallet']}"
+            elif part_name == "spindles":
+                name = row['Serial Number']
+            elif part_name == "nozzles":
+                name = row['Nozzle']
             if row["Total Failures"] > 0.02 * total_failure:
                 inspected_data.append({
+                        "name": name,
                         "number": index,
                         "failures_rate": row["Total Failures"] / total_failure,
                         "is_failure": True,
@@ -104,10 +112,10 @@ class View(ParentView):
                         "state_label": "in process 🛠️" if row["Total Failures"] / total_failure > 1 else "Normal ✔️",
                         "solution": [],
                         "is_inspected": False,
-
                     })
             else:
                 inspected_data.append({
+                        "name": name,
                         "number": index,
                         "failures_rate": row["Total Failures"] / total_failure,
                         "is_failure": False,

@@ -1,5 +1,10 @@
 import customtkinter
 import data.classes.root.state as state
+import os
+
+from PIL import Image, ImageTk
+import data.classes.analyse_data.image as img
+
 
 # views slider class
 import data.classes.views.views as views
@@ -14,8 +19,8 @@ import data.classes.views.solution_detail as solution_detail
 
 
 class ViewSlider(customtkinter.CTk):
-    def __init__(self, master, title="App", *args, **kwargs):
-        super().__init__()
+    def __init__(self, master, title="App",width=800,height=600, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.master = master
         self.state_manager = state.StateManager()
         
@@ -31,16 +36,19 @@ class ViewSlider(customtkinter.CTk):
             
         # set state for load view and refresh view
         self.state_manager.set_state("load_view", self.load_view)
+        self.state_manager.set_state("load_solution", self.show_solution)
         self.create_frame()
         
         # load views dictionary
         self.load_view_dict()
+    
     
     def create_frame(self):
         # create a frame to hold the views
         self.container = customtkinter.CTkFrame(self)
         # load frame pack
         self.container.pack(fill="both", expand=True)
+        return self.container
         
         
     def add_view(self, view, name):
@@ -93,6 +101,40 @@ class ViewSlider(customtkinter.CTk):
             "solution_detail": solution_detail.View(master=self.container,state_manager=self.state_manager)
         }
         
-        
     def destroy(self):
         self.quit()
+        
+    def show_solution(self):
+        solution = self.state_manager.get_state("current_solution")
+        # create sub window using tkinter to show solution
+        sub_window = customtkinter.CTkToplevel()
+        sub_window.title(solution.get_name())
+        sub_window.geometry("500x500")
+        # get the solution content
+        
+        self.solution_content_frame = customtkinter.CTkScrollableFrame(master=sub_window)
+        self.solution_content_frame.pack(fill="both", expand=True)
+        
+        solution_content = solution.content(self.solution_content_frame)
+        
+        # create a button to check the sub window
+        check_button = customtkinter.CTkButton(self.solution_content_frame, text="Check", command=lambda: self.solution_check(sub_window,solution))
+        check_button.pack()
+
+    def solution_check(self,sub_window,solution):
+        # Get the part information
+        part_information = self.state_manager.get_state("part_inspected_information")
+        # Apply the solution and check if the solution is not already applied
+        if solution not in part_information["solution"]:
+            part_information["solution"].append(solution)
+            self.state_manager.set_state("part_inspected_information", {
+                "part": part_information["part"],
+                "information": part_information["information"],
+                "solution": part_information["solution"] + [solution.get_id()],
+            })
+
+        print(self.state_manager.get_state("part_inspected_information"))
+        self.state_manager.get_state("load_view")(name="inspector")
+        sub_window.destroy()
+
+        
