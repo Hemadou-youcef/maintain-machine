@@ -97,11 +97,11 @@ class View(ParentView):
         # loop through the table and check if the Total Failures is greater than 2% of the sum of Total Failures
         for index, row in table.iterrows():
             if part_name == "feeders":
-                name = f"{row['Feeder']}-{row['Serial Number']}-{row['Component']}-{row['Track/Pallet']}"
+                name = f"{row['Component']},Feeder: {' '.join(row['Feeder'].split(' ')[1:])}, Slot: ,Track: {row['Track/Pallet'].split(' ')[1]}"
             elif part_name == "spindles":
-                name = row['Serial Number']
+                name = f"Spindle: {row['Serial Number']}"
             elif part_name == "nozzles":
-                name = row['Nozzle']
+                name = f"Nozzle: {row['Nozzle']}"
             if row["Total Failures"] > 0.02 * total_failure:
                 inspected_data.append({
                         "name": name,
@@ -110,7 +110,7 @@ class View(ParentView):
                         "is_failure": True,
                         "state": False,
                         "state_label": "in process 🛠️" if row["Total Failures"] / total_failure > 1 else "Normal ✔️",
-                        "solution": [],
+                        "solutions": [],
                         "is_inspected": False,
                     })
             else:
@@ -121,7 +121,7 @@ class View(ParentView):
                         "is_failure": False,
                         "state": False,
                         "state_label": "Normal ✔️",
-                        "solution": [],
+                        "solutions": [],
                         "is_inspected": False,
                     })
                 

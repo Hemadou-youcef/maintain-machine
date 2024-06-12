@@ -32,7 +32,7 @@ class View(ParentView):
         
         spindlesElement = []
         for i, spindle in enumerate(inspected_spindles):
-            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Spindle-{spindle['name']}")
+            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"{spindle['name']}")
             label.grid(row=i, column=0, padx=10, pady=10, sticky='w')
             
             # Check the type of the question and decide which widget to use
@@ -62,6 +62,6 @@ class View(ParentView):
         self.state_manager.set_state("part_inspected_information",{
             "part": "spindle",
             "information": spindles,
-            "solution": []
+            "solutions": []
         })
         self.state_manager.get_state("load_view")(name="inspector")

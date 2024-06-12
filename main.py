@@ -1,4 +1,4 @@
-import data.classes.analyse_data.solutions.first_solution as first_solution
+import data.classes.analyse_data.solutions.feeder.feeder_solution_1 as feeder_solution_1
 import tkinter as tk
 import customtkinter
 from PIL import Image, ImageTk

@@ -32,7 +32,7 @@ class View(ParentView):
         
         feedersElement = []
         for i, feeder in enumerate(inspected_feeders):
-            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"Feeders-{feeder['name']}")
+            label = customtkinter.CTkLabel(master=scrollable_frame, text=f"{feeder['name']}")
             label.grid(row=i, column=0, padx=10, pady=10, sticky='w')
             
             # Check the type of the question and decide which widget to use
@@ -61,7 +61,7 @@ class View(ParentView):
         self.state_manager.set_state("part_inspected_information", {
             "part": "feeder",
             "information": feeder,
-            "solution": []
+            "solutions": []
         })
         self.state_manager.get_state("load_view")(name="inspector")
     

@@ -7,8 +7,8 @@ import data.classes.analyse_data.image as img
 class SolutionContent(Solution):
     def __init__(self):
         super().__init__()
-        self.name = "THIS IS SOLUTION"
-        self.id = 1
+        self.name = "SECOND SOLUTION"
+        self.id = 2
 
     def content(self,master):
         

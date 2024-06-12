@@ -119,21 +119,20 @@ class ViewSlider(customtkinter.CTk):
         
         # create a button to check the sub window
         check_button = customtkinter.CTkButton(self.solution_content_frame, text="Check", command=lambda: self.solution_check(sub_window,solution))
-        check_button.pack()
+        check_button.pack(pady=20)
 
     def solution_check(self,sub_window,solution):
         # Get the part information
         part_information = self.state_manager.get_state("part_inspected_information")
         # Apply the solution and check if the solution is not already applied
-        if solution not in part_information["solution"]:
-            part_information["solution"].append(solution)
+        if solution not in part_information["solutions"]:
+            part_information["solutions"].append(solution)
             self.state_manager.set_state("part_inspected_information", {
                 "part": part_information["part"],
                 "information": part_information["information"],
-                "solution": part_information["solution"] + [solution.get_id()],
+                "solutions": part_information["solutions"] + [solution.get_id()],
             })
 
-        print(self.state_manager.get_state("part_inspected_information"))
         self.state_manager.get_state("load_view")(name="inspector")
         sub_window.destroy()
 

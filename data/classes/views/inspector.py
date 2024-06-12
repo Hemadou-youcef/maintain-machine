@@ -93,21 +93,19 @@ class View(ParentView):
             solution_button = customtkinter.CTkButton(master=solutions_frame, text="show", command=lambda sol=sol: self.show_solution(sol))
             solution_button.grid(row=i, column=1, padx=10, pady=10, sticky='w')
 
-            # create a lable to show if the solution is applied or not
-            # the applied solution will be shown --- ☑
-            # the not applied solution will be shown --- ☐
-            if sol.get_id() in part_information['solution']:
-                applied_label = customtkinter.CTkLabel(solutions_frame, text="☑")
-            else:
-                applied_label = customtkinter.CTkLabel(solutions_frame, text="☐")
-            applied_label.grid(row=i, column=2, padx=10, pady=10, sticky='w')
+            # create a checkbox to show if the solution is applied or not
+            is_applied = tk.BooleanVar(master=solutions_frame,value=sol.get_id() in part_information['solutions'])
+            
+            applied_checkbox = customtkinter.CTkCheckBox(master=solutions_frame, text="", variable=is_applied,state=tk.DISABLED)
+            applied_checkbox.grid(row=i, column=2, padx=10, pady=10, sticky='w')
+            
             solution_buttons.append(solution_button)
 
         # show button in center of the bottom that will Submit the inspection
         submit_button.grid(row=3, column=0, padx=10, pady=10,sticky=customtkinter.NSEW,columnspan=4)
 
         
-        return [label, submit_button, solutions_frame, *solution_buttons]
+        return [label, submit_button, solutions_frame, *solution_buttons,is_applied,applied_checkbox]
     
 
     def show_solution(self, solution):
@@ -130,55 +128,36 @@ class View(ParentView):
     
     
     def submit(self):
-        # get the result of the question
-        question_answer = self.questionElement.get()
-        question_result = self.diagnosis_tree.getResult(self.state_manager.get_state("part_inspected_information")['current_question_index'], question_answer)
-        # result of this function is a list of 3 elements
-        # the first element is the question answer
-        # the second element is the next question index
-        # the third element is a boolean to tell that the question loop is stopped or not
-
-        self.state_manager.set_state("part_inspected_information",{
-                "part": self.state_manager.get_state("part_inspected_information")['part'],
-                "information": self.state_manager.get_state("part_inspected_information")['information'],
-                "questions": self.state_manager.get_state("part_inspected_information")['questions'] + [{
-                    "label": self.diagnosis_tree.getQuestion(self.state_manager.get_state("part_inspected_information")['current_question_index']),
-                    "index": self.state_manager.get_state("part_inspected_information")['current_question_index'],
-                    "answer": self.questionElement.get(),
-                    "result": question_result
-                }],
-                "current_question_index": question_result[2],
-                "result": question_result[3]
-            })
+        # submit
+        # save the state of the part in the state manager
+        parts_data = self.state_manager.get_state("parts")
+        inspected_part = self.state_manager.get_state("part_inspected_information")
+        part_index = 0
+        if inspected_part['part'] == "feeder":
+            part_index = 0
+        elif inspected_part['part'] == "spindle":
+            part_index = 1
+        elif inspected_part['part'] == "nozzle":
+            part_index = 2
         
-        if question_result[3]:
-            # if the answer is True then all is good
-            if question_result[1] == None:
-                showinfo("Inspection Complete", "All is good")
-                self.state_manager.get_state("load_view")(name="part_information")
-            else:
-                showinfo("Inspection Complete", question_result[1])
-                self.state_manager.get_state("load_view")(name="part_information")
-        else:
-            # if the loop is not stopped, then save this question information and load the next question
-            # self.state_manager.get_state("part_inspected_information")['questions'].append({
-            #     "question_index": self.state_manager.get_state("part_inspected_information")['current_question_index'],
-            #     "question_answer": self.questionElement.get(),
-            #     "question_result": question_result
-            # })
-            self.state_manager.get_state("load_view")(name="inspector")
-
-    def back_to_previous_question(self):
-        # remove the last question from the questions list
-        self.state_manager.set_state("part_inspected_information",{
-            "part": self.state_manager.get_state("part_inspected_information")['part'],
-            "information": self.state_manager.get_state("part_inspected_information")['information'],
-            "questions": self.state_manager.get_state("part_inspected_information")['questions'][:-1],
-            "current_question_index": self.state_manager.get_state("part_inspected_information")["questions"][-1]["index"],
-        })
-        # load the previous question
-        self.state_manager.get_state("load_view")(name="inspector")
-
+        current_parts = parts_data[0]["inspected_data"][inspected_part["information"]["number"] - 1]
+        current_parts["solutions"] = inspected_part["solutions"]
+        current_parts["state_label"] = "FIXED ✅"
+        current_parts["state"] = True
+        current_parts["is_inspected"] = True
+        # replace parts_data with the new data    
+        parts_data[part_index]["inspected_data"][inspected_part["information"]["number"] - 1] = current_parts   
+        # save the new data in the state manager
+        self.state_manager.set_state("parts", parts_data)
+        # navigate to the part view
+        views = {
+            "feeder": "feeders",
+            "nozzle": "nozzles",
+            "spindle": "spindles"
+        }
+        self.state_manager.get_state("load_view")(name=views[inspected_part['part']]) 
+        
+            
     def create_frame(self,master):
         # Create Scrollable Frame
         CTkScrollableFrame = customtkinter.CTkScrollableFrame(master)

@@ -1,4 +1,8 @@
-import data.classes.analyse_data.solutions.first_solution as first_solution
+# feeder solutions
+import data.classes.analyse_data.solutions.feeder.feeder_solution_1 as feeder_solution_1
+import data.classes.analyse_data.solutions.feeder.feeder_solution_2 as feeder_solution_2
+import data.classes.analyse_data.solutions.feeder.feeder_solution_3 as feeder_solution_3
+
 class DiagnosisTree:
     def __init__(self, part_name):
         self.part_name = part_name
@@ -6,36 +10,44 @@ class DiagnosisTree:
         self.solutions = {
             "feeder": {
                 "Components Purged": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Part Sense Failures": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Mispicks": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Pick Attempts From Empty Feeders": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Rejected": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Location Failures": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "Components Upside Down": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 "VPS Part Presence Failures": [
-                    first_solution.SolutionContent(),
-                    first_solution.SolutionContent()
+                    feeder_solution_1.SolutionContent(),
+                    feeder_solution_2.SolutionContent(),
+                    feeder_solution_3.SolutionContent(),
                 ],
                 # Add other feeder failure types and their solutions here...
             },
