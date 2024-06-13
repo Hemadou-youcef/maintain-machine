@@ -109,7 +109,7 @@ class ViewSlider(customtkinter.CTk):
         # create sub window using tkinter to show solution
         sub_window = customtkinter.CTkToplevel()
         sub_window.title(solution.get_name())
-        sub_window.geometry("500x500")
+        sub_window.geometry("700x500")
         # get the solution content
         
         self.solution_content_frame = customtkinter.CTkScrollableFrame(master=sub_window)
