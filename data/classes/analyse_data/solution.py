@@ -25,7 +25,7 @@ class Solution:
             if obj.startswith("\img|"):
                 # create a label to display the solution image
                 # image = self.create_image(master,obj[5:])
-                image = img.ImageClass(obj[5:]).create_image(500,300)
+                image = img.ImageClass(obj[5:]).create_image(500)
                 lable_image = customtkinter.CTkLabel(master=master, image=image,text="")
                 lable_image.pack()
                 content_objects.append(lable_image)

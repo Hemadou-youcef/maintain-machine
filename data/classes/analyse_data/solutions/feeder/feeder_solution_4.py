@@ -17,7 +17,9 @@ class SolutionContent(Solution):
             "* Keep the cover, tensioner, and idler free of adhesives and debris.\n\n"
             "* Empty the component collection area(s). Clean the magnets and make sure there are no components or debris present.\n",
             "\img|feeder/04-01-image.png",
+            "\n\n",
             "\img|feeder/04-02-image.png",
+            "\n\n",
             "\img|feeder/04-03-image.png",
             
         ]
