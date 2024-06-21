@@ -29,13 +29,15 @@ class View(ParentView):
         part_information = self.state_manager.get_state("part_inspected_information")
 
 
-        # Add any widgets or components here
-        label = customtkinter.CTkLabel(self.master, text="Inspector - " + part_information['part'])
-        label.grid(row=1, column=0, padx=10, pady=10, sticky=customtkinter.W)
-
         submit_button = customtkinter.CTkButton(master=self.master, text="Fixed", command=lambda: self.submit(),height=70)
 
         # create a frame to hold the solutions
+        text = [
+            f"Inspector - {part_information['part']}",
+            f"Part Name: {part_information["information"]["name"]}",
+            f"Total Failure: {part_information["information"]["total_failure"]}",
+            
+        ]
         solutions_frame = self.create_frame(self.master)
 
         self.diagnosis_tree = DiagnosisTree(part_information['part'])
@@ -51,6 +53,7 @@ class View(ParentView):
 
             # get the solution for the biggest failed section
             solutions = self.diagnosis_tree.get_solution(feeder.columns[biggest_failed_section])
+            text.append(f"Biggest Failure Type: {feeder.columns[biggest_failed_section]}")
 
         elif part_information['part'] == "spindle":
             # check the biggest failed section in the spindle
@@ -64,6 +67,7 @@ class View(ParentView):
 
             # get the solution for the biggest failed section
             solutions = self.diagnosis_tree.get_solution(spindle.columns[biggest_failed_section])
+            text.append(f"Biggest Failure Type: {spindle.columns[biggest_failed_section]}")
 
         elif part_information['part'] == "nozzle":
             # check the biggest failed section in the nozzle
@@ -77,11 +81,13 @@ class View(ParentView):
 
             # get the solution for the biggest failed section
             solutions = self.diagnosis_tree.get_solution(nozzle.columns[biggest_failed_section])
+            text.append(f"Biggest Failure Type: {nozzle.columns[biggest_failed_section]}")
+        
 
+        label = customtkinter.CTkLabel(self.master, text="\n".join(text), font=("Helvetica", 15),justify="left")
+        label.grid(row=1, column=0, padx=10, pady=10, sticky=customtkinter.W)
 
-            
-            
-            # create loop of button of each solution
+        # create loop of button of each solution
         solution_buttons = [] 
         for i, sol in enumerate(solutions):
             # create a label to show the solution name

@@ -44,38 +44,38 @@ class View(ParentView):
         if file_data is not None:
             # perform some analysis on the data
             # start with spindles
+            positions = [5,7,8]
             parts = [
                 {
                     "part": "feeders",
-                    "position": 5,
+                    "position": positions[0],
                     "data": None,
                     "inspected_data":[]
                 },
                 {
                     "part": "spindles",
-                    "position": 7,
+                    "position": positions[1],
                     "data": None,
                     "inspected_data":[]
                 },
                 {
                     "part": "nozzles",
-                    "position": 8,
+                    "position": positions[2],
                     "data": None,
                     "inspected_data":[]
                 }
             ]
-            positions = [5,7,8]
             tables = self.process_sheets(file_data, positions)
             
 
             for sheet_num, table in tables.items():
-                if sheet_num == 5:
+                if sheet_num == positions[0]:
                     parts[0]["data"] = table
                     parts[0]["inspected_data"] = self.check_parts(table, "feeders")
-                elif sheet_num == 7:
+                elif sheet_num == positions[1]:
                     parts[1]["data"] = table
                     parts[1]["inspected_data"] = self.check_parts(table, "spindles")
-                elif sheet_num == 8:
+                elif sheet_num == positions[2]:
                     parts[2]["data"] = table
                     parts[2]["inspected_data"] = self.check_parts(table, "nozzles")
 
@@ -101,11 +101,12 @@ class View(ParentView):
             elif part_name == "spindles":
                 name = f"Spindle: {row['Serial Number']}"
             elif part_name == "nozzles":
-                name = f"Nozzle: {row['Nozzle']}"
+                name = f"Nozzle: {row['Nozzle']} - {index}"
             if row["Total Failures"] > 0.02 * total_failure:
                 inspected_data.append({
                         "name": name,
                         "number": index,
+                        "total_failure": row["Total Failures"],
                         "failures_rate": row["Total Failures"] / total_failure,
                         "is_failure": True,
                         "state": False,

@@ -22,7 +22,7 @@ class Solution:
         # loop through the objects and append them to new variable called  
         content_objects = []
         for obj in self.objects:
-            if obj.startswith("\img|"):
+            if obj.startswith("\\img|"):
                 # create a label to display the solution image
                 # image = self.create_image(master,obj[5:])
                 image = img.ImageClass(obj[5:]).create_image(500)
