@@ -34,8 +34,8 @@ class View(ParentView):
         # create a frame to hold the solutions
         text = [
             f"Inspector - {part_information['part']}",
-            f"Part Name: {part_information["information"]["name"]}",
-            f"Total Failure: {part_information["information"]["total_failure"]}",
+            f"Part Name: {part_information['information']['name']}",
+            f"Total Failure: {part_information['information']['total_failure']}",
             
         ]
         solutions_frame = self.create_frame(self.master)
