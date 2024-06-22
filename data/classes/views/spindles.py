@@ -38,7 +38,7 @@ class View(ParentView):
             # Check the type of the question and decide which widget to use
             if spindle['is_failure'] and not spindle['is_inspected']:
                 # create a button to navigate to the inspector view
-                spindle_button = customtkinter.CTkButton(master=scrollable_frame, text="Inspect 🛠️", command= lambda: self.inspect_spindle(spindle))
+                spindle_button = customtkinter.CTkButton(master=scrollable_frame, text="Inspect 🛠️", command= lambda spindle=spindle: self.inspect_spindle(spindle))
                 spindle_button.grid(row=i, column=1, padx=10, pady=10, sticky='w')
                 spindlesElement.append(spindle_button)
             else:

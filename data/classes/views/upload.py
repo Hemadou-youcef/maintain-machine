@@ -13,8 +13,9 @@ class View(ParentView):
        
         
     def content(self):
+        # CREATE 
         # create upload button
-        upload_button_ = customtkinter.CTkButton(self.master, text="Upload", command=self.upload_file,corner_radius=0,bg_color="#161d3d")
+        upload_button_ = customtkinter.CTkButton(self.master, text="SELECT DATA FILE", command=self.upload_file,corner_radius=0,bg_color="#161d3d",width=200, height=50)
         upload_button_.pack(fill="none", expand=True)
         return [upload_button_]
     

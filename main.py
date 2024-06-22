@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 from data.classes.root.view_slider import ViewSlider
 
 if __name__ == "__main__":
+    customtkinter.set_appearance_mode("light")
     view = ViewSlider(customtkinter.CTk(), "App", width=800, height=600)
     
     # load the first view``

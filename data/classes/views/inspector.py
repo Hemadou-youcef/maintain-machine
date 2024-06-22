@@ -84,7 +84,7 @@ class View(ParentView):
             text.append(f"Biggest Failure Type: {nozzle.columns[biggest_failed_section]}")
         
 
-        label = customtkinter.CTkLabel(self.master, text="\n".join(text), font=("Helvetica", 15),justify="left")
+        label = customtkinter.CTkLabel(self.master, text="\n".join(text), font=("Helvetica", 18),justify="left")
         label.grid(row=1, column=0, padx=10, pady=10, sticky=customtkinter.W)
 
         # create loop of button of each solution
@@ -146,7 +146,7 @@ class View(ParentView):
         elif inspected_part['part'] == "nozzle":
             part_index = 2
         
-        current_parts = parts_data[0]["inspected_data"][inspected_part["information"]["number"] - 1]
+        current_parts = parts_data[part_index]["inspected_data"][inspected_part["information"]["number"] - 1]
         current_parts["solutions"] = inspected_part["solutions"]
         current_parts["state_label"] = "FIXED ✅"
         current_parts["state"] = True
