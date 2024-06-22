@@ -28,7 +28,7 @@ class SolutionContent(Solution):
             "\img|spindle/07-04-image.png",
             "4. Select the Data button to review the test results data.\n",
             "\img|spindle/07-05-image.png",
-            "\n\n",
+            "\n",
             "\img|spindle/07-06-image.png",
             "5. When finished reviewing the data, enter any desired comments in the Comments section and select OK to proceed.\n\n"
             "• Select the Finish button to save test data.\n\n"

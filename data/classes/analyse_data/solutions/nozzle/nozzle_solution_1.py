@@ -14,7 +14,7 @@ class SolutionContent(Solution):
             "Contaminated nozzles can lead to mis-picks, skewed placements and even missing components.\n\n"
             "1- Verify that there is no contamination present using the Vision window.\n",
             "\img|nozzle/01-01-image.png",
-            "\n\n",
+            "\n",
             '\img|nozzle/01-02-image.png',
         ]
     
