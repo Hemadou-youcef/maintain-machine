@@ -32,7 +32,7 @@ class Solution:
             else:
                 # create a label to display the solution description
                 
-                solution_line = customtkinter.CTkLabel(master, text=f"{obj}",justify="left",wraplength=480,font=("ariel", 20),width=500)
+                solution_line = customtkinter.CTkLabel(master, text=f"\n{obj}",justify="left",wraplength=480,font=("ariel", 20),width=500)
                 solution_line.pack()
                 content_objects.append(solution_line)
         
